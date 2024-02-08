@@ -1,0 +1,380 @@
+openapi: 3.0.0
+info:
+  title: Google Maps Directions API
+  description: Interact with Google Maps Directions API to calculate directions between locations and find places based on
+    text input.
+  version: 1.0.0
+servers:
+  - url: https://maps.googleapis.com/maps/api
+    description: Google Maps Directions Service
+paths:
+  /directions/json?key=your_gg_api_key_:
+    get:
+      operationId: getDirectionsJson
+      summary: Get Directions in JSON format
+      description: Retrieves directions between an origin and a destination in JSON format.
+      parameters:
+        - name: origin
+          in: query
+          required: true
+          description: The starting point for calculating travel directions.
+          schema:
+            type: string
+        - name: destination
+          in: query
+          required: true
+          description: The endpoint for calculating travel directions.
+          schema:
+            type: string
+        - name: mode
+          in: query
+          description: Specifies the mode of transport to use when calculating directions.
+          schema:
+            type: string
+            enum:
+              - driving
+              - walking
+              - bicycling
+              - transit
+        - name: waypoints
+          in: query
+          description: Specifies an array of waypoints to pass through along the route.
+          schema:
+            type: string
+        - name: alternatives
+          in: query
+          description: If true, more than one route alternative is provided.
+          schema:
+            type: boolean
+        - name: avoid
+          in: query
+          description: Indicates that the calculated route(s) should avoid the indicated features.
+          schema:
+            type: string
+        - name: language
+          in: query
+          description: The language in which to return results.
+          schema:
+            type: string
+        - name: units
+          in: query
+          description: Specifies the unit system to use when displaying results.
+          schema:
+            type: string
+            enum:
+              - metric
+              - imperial
+        - name: region
+          in: query
+          description: The region code specified as a ccTLD two-character value.
+          schema:
+            type: string
+        - name: arrival_time
+          in: query
+          description: Specifies the desired time of arrival for transit directions in seconds since midnight, January 1, 1970 UTC.
+          schema:
+            type: integer
+        - name: departure_time
+          in: query
+          description: Specifies the desired time of departure.
+          schema:
+            type: string
+        - name: traffic_model
+          in: query
+          description: Specifies the assumptions to use when calculating time in traffic.
+          schema:
+            type: string
+            enum:
+              - best_guess
+              - pessimistic
+              - optimistic
+        - name: transit_mode
+          in: query
+          description: Specifies one or more preferred modes of transit.
+          schema:
+            type: string
+        - name: transit_routing_preference
+          in: query
+          description: Specifies preferences for transit routes.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Directions response in JSON format
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  routes:
+                    type: array
+                    items:
+                      type: object
+  /place/findplacefromtext/json?key=your_gg_api_key_:
+    get:
+      operationId: findPlaceJson
+      summary: Find Place in JSON format
+      description: Retrieves information about a place based on text input in JSON format.
+      parameters:
+        - name: input
+          in: query
+          required: true
+          description: The text string on which to search.
+          schema:
+            type: string
+        - name: inputtype
+          in: query
+          required: true
+          description: The type of input (textquery or phonenumber).
+          schema:
+            type: string
+            enum:
+              - textquery
+              - phonenumber
+        - name: fields
+          in: query
+          description: >
+            A comma-separated list of place data types to return. Available fields are categorized into Basic (e.g.,
+            address_components, adr_address, business_status), Contact (e.g., formatted_phone_number, opening_hours),
+            and Atmosphere (e.g., price_level, rating). Include fields as needed.
+          schema:
+            type: string
+        - name: language
+          in: query
+          description: The language in which to return results.
+          schema:
+            type: string
+        - name: locationbias
+          in: query
+          description: Prefer results in a specified area.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Find Place response in JSON format
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  candidates:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        formatted_address:
+                          type: string
+                        name:
+                          type: string
+                        opening_hours:
+                          type: object
+                          properties:
+                            open_now:
+                              type: boolean
+                        place_id:
+                          type: string
+                        plus_code:
+                          type: object
+                          properties:
+                            compound_code:
+                              type: string
+                            global_code:
+                              type: string
+                        types:
+                          type: array
+                          items:
+                            type: string
+                        business_status:
+                          type: string
+                        rating:
+                          type: number
+                        user_ratings_total:
+                          type: number
+                  status:
+                    type: string
+                  error_message:
+                    type: string
+                    nullable: true
+                  info_messages:
+                    type: array
+                    items:
+                      type: string
+                    nullable: true
+  /place/textsearch/json?key=your_gg_api_key_:
+    get:
+      operationId: textSearch
+      summary: Text Search for Places
+      description: Performs a text search for places. Returns a list of places based on the text query string.
+      parameters:
+        - name: query
+          in: query
+          required: true
+          description: The text string on which to search, such as "restaurant" or "123 Main Street".
+          schema:
+            type: string
+        - name: radius
+          in: query
+          description: The distance (in meters) within which to return place results.
+          schema:
+            type: integer
+        - name: language
+          in: query
+          description: The language in which to return results.
+          schema:
+            type: string
+        - name: location
+          in: query
+          description: The latitude/longitude around which to retrieve place information.
+          schema:
+            type: string
+        - name: maxprice
+          in: query
+          description: Restricts results to only those places within the specified price range.
+          schema:
+            type: integer
+        - name: minprice
+          in: query
+          description: Restricts results to only those places within the specified minimum price range.
+          schema:
+            type: integer
+        - name: opennow
+          in: query
+          description: Returns only those places that are open for business at the time the query is sent.
+          schema:
+            type: boolean
+        - name: pagetoken
+          in: query
+          description: Returns up to 20 results from a previously run search.
+          schema:
+            type: string
+        - name: region
+          in: query
+          description: The region code, specified as a ccTLD two-character value.
+          schema:
+            type: string
+        - name: type
+          in: query
+          description: Restricts the results to places matching the specified type.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Text Search response in JSON format
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  html_attributions:
+                    type: array
+                    items:
+                      type: string
+                  results:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        formatted_address:
+                          type: string
+                        geometry:
+                          type: object
+                          properties:
+                            location:
+                              type: object
+                              properties:
+                                lat:
+                                  type: number
+                                lng:
+                                  type: number
+                            viewport:
+                              type: object
+                        icon:
+                          type: string
+                        name:
+                          type: string
+                        opening_hours:
+                          type: object
+                          properties:
+                            open_now:
+                              type: boolean
+                        photos:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              photo_reference:
+                                type: string
+                              width:
+                                type: integer
+                              height:
+                                type: integer
+                        place_id:
+                          type: string
+                        plus_code:
+                          type: object
+                        rating:
+                          type: number
+                        reference:
+                          type: string
+                        types:
+                          type: array
+                          items:
+                            type: string
+                        user_ratings_total:
+                          type: integer
+                  status:
+                    type: string
+                  error_message:
+                    type: string
+                    nullable: true
+                  info_messages:
+                    type: array
+                    items:
+                      type: string
+                      nullable: true
+                  next_page_token:
+                    type: string
+        '400':
+          description: Invalid request
+  /place/photo/json?key=your_gg_api_key_:
+    get:
+      operationId: photoSearch
+      summary: Place Photo Request
+      description: Retrieves a URL for a photo of a place, based on the photo reference returned by a previous textsearch.
+      parameters:
+        - name: maxwidth
+          in: query
+          required: false
+          description: Specifies the maximum desired width, in pixels, of the image. Defaults to 900 if not provided.
+          schema:
+            type: integer
+            default: 900
+        - name: maxheight
+          in: query
+          required: false
+          description: Specifies the maximum desired height, in pixels, of the image. Defaults to 600 if not provided.
+          schema:
+            type: integer
+            default: 600
+        - name: photo_reference
+          in: query
+          required: true
+          description: A string identifier that uniquely identifies a photo, returned from a previous search.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: URL to the image content
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  imageUrl:
+                    type: string
+                    description: URL to the requested image
+        '400':
+          description: Invalid request
+
